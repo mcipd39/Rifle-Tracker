@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rifle Tracker">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Precision Reload Tracker</title>
+<style>
+:root{--bg:#0b1220;--card:#121c2d;--card2:#18253a;--line:#2a3b55;--text:#f7fafc;--muted:#9fb0c7;--green:#34d399;--green2:#10b981;--red:#f87171;--amber:#fbbf24}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:linear-gradient(#0b1220,#07101d);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding-bottom:86px}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.top{position:sticky;top:0;z-index:30;padding:calc(10px + env(safe-area-inset-top)) 15px 12px;background:rgba(11,18,32,.94);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center}.brand h1{font-size:1.1rem;margin:0}.brand p{margin:3px 0 0;color:var(--muted);font-size:.75rem}.icon{width:42px;height:42px;border-radius:50%;border:0;background:var(--green);color:#052016;font-size:1.4rem;font-weight:800}
+main{max-width:1000px;margin:auto;padding:16px}.view{display:none}.view.active{display:block}.hero{background:radial-gradient(circle at top right,rgba(52,211,153,.18),transparent 36%),var(--card);border:1px solid var(--line);border-radius:22px;padding:20px}.hero h2{font-size:1.6rem;margin:0 0 7px}.muted{color:var(--muted);line-height:1.45}.eyebrow{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#8cf0c7;font-weight:800;margin:0 0 7px}.grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}.metric,.card,.record{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:15px}.metric span{display:block;color:var(--muted);font-size:.75rem}.metric strong{display:block;font-size:1.55rem;margin-top:4px}.card{margin-bottom:12px}.page-head,.section-head,.record-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.page-head{margin-bottom:13px}.page-head h2,.section-head h3,.record h3{margin:0}.stack{display:grid;gap:10px}.record{margin:0}.record p{margin:6px 0}.pill{display:inline-block;padding:5px 8px;border-radius:999px;background:#1c2a40;border:1px solid #344966;color:#d3dfec;font-size:.72rem;margin:5px 4px 0 0}.pill.good{color:#a7f3d0;border-color:rgba(52,211,153,.32);background:rgba(52,211,153,.1)}.pill.warn{color:#fde68a;border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.1)}
+.primary,.secondary,.danger,.small,.textbtn{border:0;border-radius:11px;padding:10px 13px;font-weight:750}.primary{background:var(--green);color:#052016}.secondary,.small{background:var(--card2);color:var(--text);border:1px solid var(--line)}.danger{background:rgba(248,113,113,.14);color:#fecaca;border:1px solid rgba(248,113,113,.25)}.small{padding:7px 9px;font-size:.76rem}.textbtn{background:transparent;color:#8cf0c7;padding:5px}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.filters{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+input,select,textarea{width:100%;background:#0c1626;border:1px solid var(--line);color:var(--text);border-radius:11px;padding:11px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--green)}textarea{min-height:86px;resize:vertical}label{display:block;font-size:.78rem;font-weight:750;margin:10px 0}.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(5,1fr);padding:8px 7px calc(8px + env(safe-area-inset-bottom));background:rgba(11,18,32,.96);backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.06)}.nav{border:0;background:transparent;color:#8193aa;display:grid;gap:2px;place-items:center;padding:5px}.nav span{font-size:1.15rem}.nav small{font-size:.65rem}.nav.active{color:#8cf0c7}
+dialog{width:min(94vw,620px);max-height:90vh;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--text);padding:0;box-shadow:0 28px 80px rgba(0,0,0,.55)}dialog::backdrop{background:rgba(0,0,0,.66);backdrop-filter:blur(4px)}.modal{padding:18px;max-height:90vh;overflow:auto}.modal-head{display:flex;justify-content:space-between;align-items:center;position:sticky;top:-18px;background:var(--card);padding:14px 0 9px;z-index:2}.modal-head h3{margin:0}.close{border:0;background:transparent;color:var(--muted);font-size:1.5rem}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;position:sticky;bottom:-18px;background:var(--card);padding:12px 0 2px}.hint{font-size:.72rem;color:#8cf0c7;margin:2px 0 8px}.empty{color:var(--muted);padding:14px 0}.timeline{display:grid;gap:10px}.timeline div{border-left:2px solid var(--line);padding-left:11px}.sheet{position:fixed;z-index:60;left:0;right:0;bottom:0;background:var(--card);border-radius:22px 22px 0 0;padding:12px 17px calc(18px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}.sheet button{width:100%;margin-top:7px;text-align:left}.backdrop{position:fixed;z-index:55;inset:0;background:rgba(0,0,0,.55)}.hidden{display:none!important}.toast{position:fixed;z-index:70;left:50%;bottom:95px;transform:translateX(-50%);background:white;color:#111827;padding:10px 14px;border-radius:11px;font-weight:750}.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:.8rem}.table th,.table td{padding:8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+@media(min-width:760px){.grid4{grid-template-columns:repeat(4,1fr)}.bottom{left:50%;transform:translateX(-50%);max-width:620px;border:1px solid var(--line);border-bottom:0;border-radius:17px 17px 0 0}}
+@media(max-width:520px){.two,.three,.filters{grid-template-columns:1fr}.page-head{align-items:flex-start}.brand p{display:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><h1>Precision Reload Tracker</h1><p>Full rifle, barrel, load, lands and maintenance history</p></div>
+  <button id="quickBtn" class="icon">＋</button>
+</header>
+
+<main>
+<section class="view active" data-view="home">
+  <div class="hero"><p class="eyebrow">Bench & range dashboard</p><h2>Precision Reload</h2><p class="muted">Your data stays on this device. Most fields are optional—enter only what matters. Export backups regularly.</p></div>
+  <div class="grid4">
+    <div class="metric"><span>Firearms</span><strong id="mFirearms">0</strong></div>
+    <div class="metric"><span>Total rounds</span><strong id="mRounds">0</strong></div>
+    <div class="metric"><span>Recipes</span><strong id="mRecipes">0</strong></div>
+    <div class="metric"><span>Components</span><strong id="mComponents">0</strong></div>
+  </div>
+  <div class="card"><div class="section-head"><h3>Attention</h3><button class="textbtn" data-nav="stock">Stock</button></div><div id="attention"></div></div>
+  <div class="card"><div class="section-head"><h3>Recent activity</h3></div><div id="activity" class="timeline"></div></div>
+</section>
+
+<section class="view" data-view="guns">
+  <div class="page-head"><div><p class="eyebrow">Equipment</p><h2>Firearms</h2></div><button class="primary" data-open="firearmModal">Add</button></div>
+  <div id="firearmList" class="stack"></div>
+</section>
+
+<section class="view" data-view="barrels">
+  <div class="page-head"><div><p class="eyebrow">Barrel lifecycle</p><h2>Barrels</h2></div><button class="primary" data-open="barrelModal">Add</button></div>
+  <div class="filters"><select id="barrelFilter"><option value="">All firearms</option></select><input id="barrelSearch" type="search" placeholder="Search barrels…"></div>
+  <div id="barrelList" class="stack"></div>
+</section>
+
+<section class="view" data-view="log">
+  <div class="page-head"><div><p class="eyebrow">Chronograph & groups</p><h2>Shooting Log</h2></div><div><button class="secondary" data-open="ladderModal">Ladder</button> <button class="primary" data-open="logModal">Log</button></div></div>
+  <div class="filters"><select id="logFilter"><option value="">All firearms</option></select><input id="logSearch" type="search" placeholder="Search logs…"></div>
+  <div id="logList" class="stack"></div>
+</section>
+
+<section class="view" data-view="recipes">
+  <div class="page-head"><div><p class="eyebrow">Load development</p><h2>Load Recipes</h2></div><button class="primary" data-open="recipeModal">New</button></div>
+  <div class="filters"><select id="recipeFilter"><option value="">All calibers</option></select><input id="recipeSearch" type="search" placeholder="Search recipes…"></div>
+  <div id="recipeList" class="stack"></div>
+</section>
+
+<section class="view" data-view="stock">
+  <div class="page-head"><div><p class="eyebrow">Inventory</p><h2>Components</h2></div><button class="primary" data-open="componentModal">Add</button></div>
+  <div class="filters"><select id="stockFilter"><option value="">All types</option><option>Bullet</option><option>Powder</option><option>Primer</option><option>Brass</option><option>Loaded Ammo</option><option>Other</option></select><input id="stockSearch" type="search" placeholder="Search stock…"></div>
+  <div id="componentList" class="stack"></div>
+</section>
+
+<section class="view" data-view="lands">
+  <div class="page-head"><div><p class="eyebrow">Barrel + bullet history</p><h2>Rifle Lands</h2></div><button class="primary" data-open="landsModal">Add</button></div>
+  <div class="filters"><select id="landsFilter"><option value="">All firearms</option></select><input id="landsSearch" type="search" placeholder="Search bullet or barrel…"></div>
+  <div id="landsList" class="stack"></div>
+</section>
+
+<section class="view" data-view="maint">
+  <div class="page-head"><div><p class="eyebrow">Service history</p><h2>Maintenance</h2></div><button class="primary" data-open="maintenanceModal">Add</button></div>
+  <div class="filters"><select id="maintFilter"><option value="">All firearms</option></select><input id="maintSearch" type="search" placeholder="Search maintenance…"></div>
+  <div id="maintenanceList" class="stack"></div>
+</section>
+
+<section class="view" data-view="more">
+  <div class="page-head"><div><p class="eyebrow">Data & tools</p><h2>More</h2></div></div>
+  <div class="card"><h3>Sections</h3><div class="actions"><button class="secondary" data-nav="barrels">Barrels</button><button class="secondary" data-nav="stock">Components</button><button class="secondary" data-nav="lands">Lands</button><button class="secondary" data-nav="maint">Maintenance</button></div></div>
+  <div class="card"><h3>Backup</h3><p class="muted">Export before major changes or clearing Safari website data.</p><div class="actions"><button id="exportBtn" class="primary">Export Backup</button><button id="importBtn" class="secondary">Import Backup</button><input id="importFile" type="file" accept=".json" hidden></div></div>
+  <div class="card"><h3>Data tools</h3><div class="actions"><button id="resetBtn" class="danger">Erase all data</button></div></div>
+</section>
+</main>
+
+<nav class="bottom">
+<button class="nav active" data-nav="home"><span>⌂</span><small>Home</small></button>
+<button class="nav" data-nav="guns"><span>⌁</span><small>Guns</small></button>
+<button class="nav" data-nav="log"><span>◎</span><small>Log</small></button>
+<button class="nav" data-nav="recipes"><span>◫</span><small>Recipes</small></button>
+<button class="nav" data-nav="more"><span>⚙</span><small>More</small></button>
+</nav>
+
+<div id="shade" class="backdrop hidden"></div>
+<aside id="quickSheet" class="sheet hidden">
+<h3>Quick actions</h3>
+<button class="secondary" data-open="logModal">Log shooting</button>
+<button class="secondary" data-open="ladderModal">Log ladder test</button>
+<button class="secondary" data-open="recipeModal">Add recipe</button>
+<button class="secondary" data-open="landsModal">Measure lands</button>
+<button class="secondary" data-open="maintenanceModal">Record maintenance</button>
+</aside>
+
+<dialog id="firearmModal"><form class="modal" data-form="firearm">
+<div class="modal-head"><h3>Firearm</h3><button type="button" class="close">×</button></div><input name="id" type="hidden">
+<p class="hint">Previously entered values appear as suggestions while typing.</p>
+<div class="two"><label>Make<input name="make" list="dl-firearm-makes"></label><label>Model<input name="model" list="dl-firearm-models"></label></div>
+<div class="two"><label>Caliber<input name="caliber" list="dl-calibers"></label><label>Action<input name="action" list="dl-actions"></label></div>
+<div class="two"><label>Scope<input name="scope" list="dl-scopes"></label><label>Scope height<input name="scopeHeight" type="number" step=".001"></label></div>
+<label>Notes<textarea name="notes"></textarea></label>
+<div class="modal-actions"><button type="button" class="secondary close">Cancel</button><button class="primary">Save</button></div></form></dialog>
+
+<dialog id="barrelModal"><form class="modal" data-form="barrel">
+<div class="modal-head"><h3>Barrel</h3><button type="button" class="close">×</button></div><input name="id" type="hidden">
+<label>Firearm<select name="firearmId" class="firearm-select"></select></label>
+<div class="two"><label>Barrel name<input name="name" list="dl-barrel-names"></label><label>Manufacturer<input name="manufacturer" list="dl-manufacturers"></label></div>
+<div class="three"><label>Length (in)<input name="length" type="number" step=".1"></label><label>Twist<input name="twist" list="dl-twists"></label><label>Caliber<input name="caliber" list="dl-calibers"></label></div>
+<div class="two"><label>Starting rounds<input name="roundCount" type="number" min="0" value="0"></label><label>Current barrel<select name="isCurrent"><option value="false">No</option><option value="true">Yes</option></select></label></div>
+<div class="two"><label>Cleaning interval<input name="cleanInterval" type="number" min="0"></label><label>Rounds since cleaning<input name="roundsSinceClean" type="number" min="0" value="0"></label></div>
+<label>Notes<textarea name="notes"></textarea></label>
+<div class="modal-actions"><button type="button" class="secondary close">Cancel</button><button class="primary">Save</button></div></form></dialog>
+
+<dialog id="recipeModal"><form class="modal" data-form="recipe">
+<div class="modal-head"><h3>Load Recipe</h3><button type="button" class="close">×</button></div><input name="id" type="hidden">
+<label>Recipe name<input name="name"></label>
+<div class="two"><label>Caliber<input name="caliber" list="dl-calibers"></label><label>Firearm<select name="firearmId" class="firearm-select"></select></label></div>
+<label>Barrel<select name="barrelId" class="barrel-select"><option value="">Any / not assigned</option></select></label>
+<div class="three"><label>Bullet make<input name="bulletMake" list="dl-bullet-makes"></label><label>Bullet model<input name="bulletModel" list="dl-bullet-models"></label><label>Weight (gr)<input name="bulletGrains" type="number" step=".1" list="dl-bullet-weights"></label></div>
+<div class="two"><label>Powder<input name="powder" list="dl-powders"></label><label>Charge (gr)<input name="chargeGr" type="number" step=".1" list="dl-charges"></label></div>
+<div class="two"><label>Primer<input name="primer" list="dl-primers"></label><label>Brass<input name="brass" list="dl-brass"></label></div>
+<div class="three"><label>COAL<input name="coal" type="number" step=".001" list="dl-coal"></label><label>CBTO<input name="cbto" type="number" step=".001" list="dl-cbto"></label><label>Quantity<input name="quantity" type="number" min="0" value="0"></label></div>
+<div class="three"><label>Bushing<input name="bushing" list="dl-bushings"></label><label>Mandrel<input name="mandrel" list="dl-mandrels"></label><label>Shoulder bump<input name="shoulderBump" list="dl-bumps"></label></div>
+<div class="two"><label>Annealer<input name="annealer" list="dl-annealers"></label><label>Anneal setting<input name="annealSetting" list="dl-anneal-settings"></label></div>
+<label>Notes<textarea name="notes"></textarea></label>
+<div class="modal-actions"><button type="button" class="secondary close">Cancel</button><button class="primary">Save</button></div></form></dialog>
+
+<dialog id="logModal"><form class="modal" data-form="log">
+<div class="modal-head"><h3>Shooting Log</h3><button type="button" class="close">×</button></div><input name="id" type="hidden">
+<label>Date<input name="date" type="date"></label>
+<label>Firearm<select name="firearmId" class="firearm-select"></select></label>
+<label>Barrel<select name="barrelId" class="barrel-select"></select></label>
+<label>Recipe<select name="recipeId" class="recipe-select"><option value="">No linked recipe</option></select></label>
+<div class="three"><label>Rounds<input name="rounds" type="number" min="1"></label><label>Group MOA<input name="groupMoa" type="number" step=".01"></label><label>Distance yd<input name="distance" type="number" min="0"></label></div>
+<label>Velocity string<textarea name="velocities" placeholder="3012, 3008, 3015, 3004"></textarea></label>
+<div class="three"><label>Temp °F<input name="temperature" type="number"></label><label>Elevation ft<input name="elevation" type="number"></label><label>Location<input name="location" list="dl-locations"></label></div>
+<label>Notes<textarea name="notes"></textarea></label>
+<div class="modal-actions"><button type="button" class="secondary close">Cancel</button><button class="primary">Save</button></div></form></dialog>
+
+<dialog id="ladderModal"><form class="modal" data-form="ladder">
+<div class="modal-head"><h3>Ladder / Multi-load Test</h3><button type="button" class="close">×</button></div>
+<label>Date<input name="date" type="date"></label><label>Firearm<select name="firearmId" class="firearm-select"></select></label><label>Barrel<select name="barrelId" class="barrel-select"></select></label>
+<div class="two"><label>Bullet make<input name="bulletMake" list="dl-bullet-makes"></label><label>Bullet model<input name="bulletModel" list="dl-bullet-models"></label></div>
+<div class="two"><label>Bullet weight<input name="bulletGrains" type="number" list="dl-bullet-weights"></label><label>Powder<input name="powder" list="dl-powders"></label></div>
+<p class="hint">Enter raw velocities for each charge. Average, SD and ES calculate automatically.</p>
+<div id="ladderRows"></div>
+<button id="addLadderRow" type="button" class="secondary">Add charge row</button>
+<label>Notes<textarea name="notes"></textarea></label>
+<div class="modal-actions"><button type="button" class="secondary close">Cancel</button><button class="primary">Save Test</button></div></form></dialog>
+
+<dialog id="componentModal"><form class="modal" data-form="component">
+<div class="modal-head"><h3>Component</h3><button type="button" class="close">×</button></div><input name="id" type="hidden">
+<label>Type<select name="itemType"><option>Bullet</option><option>Powder</option><option>Primer</option><option>Brass</option><option>Loaded Ammo</option><option>Other</option></select></label>
+<div class="two"><label>Manufacturer<input name="manufacturer" list="dl-manufacturers"></label><label>Name / specification<input name="nameSpec" list="dl-component-names"></label></div>
+<div class="two"><label>Lot number<input name="lotNumber" list="dl-lots"></label><label>Location<input name="location" list="dl-locations"></label></div>
+<div class="three"><label>Quantity<input name="quantity" type="number" step=".01" min="0"></label><label>Unit<input name="unit" list="dl-units"></label><label>Reorder at<input name="reorderAt" type="number" step=".01" min="0" value="0"></label></div>
+<label>Notes<textarea name="notes"></textarea></label>
+<div class="modal-actions"><button type="button" class="secondary close">Cancel</button><button class="primary">Save</button></div></form></dialog>
+
+<dialog id="landsModal"><form class="modal" data-form="lands">
+<div class="modal-head"><h3>Lands Measurement</h3><button type="button" class="close">×</button></div><input name="id" type="hidden">
+<label>Date<input name="date" type="date"></label><label>Firearm<select name="firearmId" class="firearm-select"></select></label><label>Barrel<select name="barrelId" class="barrel-select"></select></label>
+<div class="three"><label>Bullet make<input name="bulletMake" list="dl-bullet-makes"></label><label>Bullet model<input name="bulletModel" list="dl-bullet-models"></label><label>Weight (gr)<input name="bulletGrains" type="number" step=".1" list="dl-bullet-weights"></label></div>
+<div class="three"><label>Barrel round count<input name="roundCount" type="number" min="0"></label><label>CBTO to lands<input name="cbtoLands" type="number" step=".001"></label><label>COAL to lands<input name="coalLands" type="number" step=".001"></label></div>
+<div class="two"><label>Comparator / tool<input name="comparator" list="dl-comparators"></label><label>Measurement label<input name="roundLabel" list="dl-round-labels" placeholder="Loaded round / dummy round"></label></div>
+<label>Notes<textarea name="notes"></textarea></label>
+<div class="modal-actions"><button type="button" class="secondary close">Cancel</button><button class="primary">Save</button></div></form></dialog>
+
+<dialog id="maintenanceModal"><form class="modal" data-form="maintenance">
+<div class="modal-head"><h3>Maintenance</h3><button type="button" class="close">×</button></div><input name="id" type="hidden">
+<label>Date<input name="date" type="date"></label><label>Firearm<select name="firearmId" class="firearm-select"></select></label><label>Barrel<select name="barrelId" class="barrel-select"></select></label>
+<div class="two"><label>Service type<input name="type" list="dl-maint-types"></label><label>Round count<input name="roundCount" type="number" min="0"></label></div>
+<label>Products / tools<input name="products" list="dl-maint-products"></label>
+<label>Notes<textarea name="notes"></textarea></label>
+<div class="modal-actions"><button type="button" class="secondary close">Cancel</button><button class="primary">Save</button></div></form></dialog>
+
+<dialog id="detailModal"><div class="modal"><div class="modal-head"><h3 id="detailTitle">Details</h3><button class="close">×</button></div><div id="detailBody"></div></div></dialog>
+
+<div id="toast" class="toast hidden"></div>
+
+<datalist id="dl-firearm-makes"></datalist><datalist id="dl-firearm-models"></datalist><datalist id="dl-calibers"></datalist><datalist id="dl-actions"></datalist><datalist id="dl-scopes"></datalist>
+<datalist id="dl-barrel-names"></datalist><datalist id="dl-manufacturers"></datalist><datalist id="dl-twists"></datalist>
+<datalist id="dl-bullet-makes"></datalist><datalist id="dl-bullet-models"></datalist><datalist id="dl-bullet-weights"></datalist><datalist id="dl-powders"></datalist><datalist id="dl-primers"></datalist><datalist id="dl-brass"></datalist><datalist id="dl-charges"></datalist><datalist id="dl-coal"></datalist><datalist id="dl-cbto"></datalist>
+<datalist id="dl-bushings"></datalist><datalist id="dl-mandrels"></datalist><datalist id="dl-bumps"></datalist><datalist id="dl-annealers"></datalist><datalist id="dl-anneal-settings"></datalist>
+<datalist id="dl-component-names"></datalist><datalist id="dl-lots"></datalist><datalist id="dl-locations"></datalist><datalist id="dl-units"></datalist><datalist id="dl-comparators"></datalist><datalist id="dl-round-labels"></datalist><datalist id="dl-maint-types"></datalist><datalist id="dl-maint-products"></datalist>
+
+<script>
+const KEY='precisionReloadTracker';
+const fresh=()=>({firearms:[],barrels:[],shootingLogs:[],recipes:[],components:[],rifleLands:[],maintenance:[],activity:[]});
+let state=load();
+
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');return normalize(x||fresh())}catch{return fresh()}}
+function normalize(x){
+  const d=fresh(), y={...d,...x};
+  for(const k of Object.keys(d))if(!Array.isArray(y[k]))y[k]=[];
+  // Compatibility aliases from possible older versions
+  if(Array.isArray(x.logs)&&!y.shootingLogs.length)y.shootingLogs=x.logs;
+  if(Array.isArray(x.lands)&&!y.rifleLands.length)y.rifleLands=x.lands;
+  return y;
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));render()}
+const uid=()=>crypto.randomUUID();
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const clean=v=>String(v??'').trim();
+const num=v=>v===''||v==null?null:Number(v);
+const uniq=a=>[...new Set(a.map(clean).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'}));
+const today=()=>new Date().toISOString().slice(0,10);
+const firearm=id=>state.firearms.find(x=>x.id===id);
+const barrel=id=>state.barrels.find(x=>x.id===id);
+const recipe=id=>state.recipes.find(x=>x.id===id);
+const firearmName=id=>{const f=firearm(id);return f?`${f.make||''} ${f.model||''}`.trim():'Unknown firearm'};
+const barrelName=id=>{const b=barrel(id);return b?b.name||`${b.manufacturer||''} ${b.length||''}`.trim():'Unknown barrel'};
+function stats(raw){const xs=String(raw||'').split(/[\s,;]+/).map(Number).filter(Number.isFinite);if(!xs.length)return{values:[],avg:null,sd:null,es:null};const avg=xs.reduce((a,b)=>a+b,0)/xs.length;const es=Math.max(...xs)-Math.min(...xs);const sd=xs.length>1?Math.sqrt(xs.reduce((s,x)=>s+(x-avg)**2,0)/(xs.length-1)):0;return{values:xs,avg,sd,es}}
+function logActivity(text){state.activity.unshift({id:uid(),at:new Date().toISOString(),text});state.activity=state.activity.slice(0,100)}
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),1800)}
+function navigate(v){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.nav===v));window.scrollTo({top:0,behavior:'smooth'})}
+
+function fillDatalist(id,vals){document.getElementById(id).innerHTML=uniq(vals).map(v=>`<option value="${esc(v)}"></option>`).join('')}
+function libraries(){
+  const r=state.recipes,c=state.components,l=state.rifleLands,f=state.firearms,b=state.barrels,m=state.maintenance,s=state.shootingLogs;
+  fillDatalist('dl-firearm-makes',f.map(x=>x.make));fillDatalist('dl-firearm-models',f.map(x=>x.model));fillDatalist('dl-calibers',[...f.map(x=>x.caliber),...b.map(x=>x.caliber),...r.map(x=>x.caliber)]);
+  fillDatalist('dl-actions',f.map(x=>x.action));fillDatalist('dl-scopes',f.map(x=>x.scope));fillDatalist('dl-barrel-names',[...b.map(x=>x.name),...b.map(x=>x.manufacturer)]);
+  fillDatalist('dl-manufacturers',[...f.map(x=>x.make),...b.map(x=>x.manufacturer),...c.map(x=>x.manufacturer),...r.map(x=>x.bulletMake)]);
+  fillDatalist('dl-twists',b.map(x=>x.twist));fillDatalist('dl-bullet-makes',[...r.map(x=>x.bulletMake),...l.map(x=>x.bulletMake),...c.filter(x=>x.itemType==='Bullet').map(x=>x.manufacturer)]);
+  fillDatalist('dl-bullet-models',[...r.map(x=>x.bulletModel||x.bullet),...l.map(x=>x.bulletModel||x.bullet),...c.filter(x=>x.itemType==='Bullet').map(x=>x.nameSpec)]);
+  fillDatalist('dl-bullet-weights',[...r.map(x=>x.bulletGrains),...l.map(x=>x.bulletGrains)]);fillDatalist('dl-powders',[...r.map(x=>x.powder),...c.filter(x=>x.itemType==='Powder').map(x=>x.nameSpec)]);
+  fillDatalist('dl-primers',[...r.map(x=>x.primer),...c.filter(x=>x.itemType==='Primer').map(x=>x.nameSpec)]);fillDatalist('dl-brass',[...r.map(x=>x.brass),...c.filter(x=>x.itemType==='Brass').map(x=>x.nameSpec)]);
+  fillDatalist('dl-charges',r.map(x=>x.chargeGr));fillDatalist('dl-coal',r.map(x=>x.coal));fillDatalist('dl-cbto',r.map(x=>x.cbto));fillDatalist('dl-bushings',r.map(x=>x.bushing));fillDatalist('dl-mandrels',r.map(x=>x.mandrel));fillDatalist('dl-bumps',r.map(x=>x.shoulderBump));
+  fillDatalist('dl-annealers',r.map(x=>x.annealer));fillDatalist('dl-anneal-settings',r.map(x=>x.annealSetting));fillDatalist('dl-component-names',c.map(x=>x.nameSpec));fillDatalist('dl-lots',c.map(x=>x.lotNumber));
+  fillDatalist('dl-locations',[...c.map(x=>x.location),...s.map(x=>x.location)]);fillDatalist('dl-units',[...c.map(x=>x.unit),'count','lb','rounds','cases']);
+  fillDatalist('dl-comparators',l.map(x=>x.comparator));fillDatalist('dl-round-labels',l.map(x=>x.roundLabel));fillDatalist('dl-maint-types',[...m.map(x=>x.type),'Cleaning','Copper removal','Carbon ring service','Torque check','Scope / zero','Repair']);
+  fillDatalist('dl-maint-products',m.map(x=>x.products));
+}
+function syncSelects(){
+  const fopts=state.firearms.map(f=>`<option value="${f.id}">${esc(firearmName(f.id))} — ${esc(f.caliber||'')}</option>`).join('');
+  document.querySelectorAll('.firearm-select').forEach(s=>{const v=s.value;s.innerHTML='<option value="">Select firearm</option>'+fopts;s.value=v});
+  for(const id of ['barrelFilter','logFilter','landsFilter','maintFilter']){const s=document.getElementById(id),v=s.value;s.innerHTML='<option value="">All firearms</option>'+fopts;s.value=v}
+  const cal=uniq([...state.firearms.map(x=>x.caliber),...state.recipes.map(x=>x.caliber)]);const rf=document.getElementById('recipeFilter'),rv=rf.value;rf.innerHTML='<option value="">All calibers</option>'+cal.map(x=>`<option>${esc(x)}</option>`).join('');rf.value=rv;
+  document.querySelectorAll('.firearm-select').forEach(s=>filterDependent(s));
+}
+function filterDependent(fs){
+  const form=fs.closest('form');if(!form)return;
+  const bs=form.querySelector('.barrel-select');if(bs){const old=bs.value;const list=state.barrels.filter(b=>!fs.value||b.firearmId===fs.value);bs.innerHTML='<option value="">Select barrel</option>'+list.map(b=>`<option value="${b.id}">${esc(b.name||'Barrel')} · ${b.length||'—'}" · ${b.roundCount||0} rounds${String(b.isCurrent)==='true'?' · Current':''}</option>`).join('');if(list.some(b=>b.id===old))bs.value=old;else{const cur=list.find(b=>String(b.isCurrent)==='true');if(cur)bs.value=cur.id}}
+  const rs=form.querySelector('.recipe-select');if(rs){const old=rs.value;const list=state.recipes.filter(r=>!fs.value||!r.firearmId||r.firearmId===fs.value);rs.innerHTML='<option value="">No linked recipe</option>'+list.map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join('');if(list.some(r=>r.id===old))rs.value=old}
+}
+function openModal(id,rec=null){
+  syncSelects();libraries();const d=document.getElementById(id),form=d.querySelector('form');if(form){form.reset();form.querySelectorAll('[name=id]').forEach(x=>x.value='');form.querySelectorAll('input[type=date]').forEach(x=>x.value=today());if(id==='ladderModal'){document.getElementById('ladderRows').innerHTML='';addLadderRow();addLadderRow();addLadderRow()}if(rec)for(const[k,v]of Object.entries(rec)){const e=form.elements.namedItem(k);if(e)e.value=v??''}const fs=form.querySelector('.firearm-select');if(fs)filterDependent(fs);if(rec){const bs=form.querySelector('.barrel-select');if(bs)bs.value=rec.barrelId||'';const rs=form.querySelector('.recipe-select');if(rs)rs.value=rec.recipeId||''}}
+  d.showModal()
+}
+function formObj(form){return Object.fromEntries(new FormData(form).entries())}
+function latestLand(barrelId,bulletMake,bulletModel,bulletGrains){
+  return state.rifleLands.filter(x=>x.barrelId===barrelId&&clean(x.bulletMake).toLowerCase()===clean(bulletMake).toLowerCase()&&clean(x.bulletModel||x.bullet).toLowerCase()===clean(bulletModel).toLowerCase()&&(!bulletGrains||!x.bulletGrains||Number(x.bulletGrains)===Number(bulletGrains))).sort((a,b)=>Number(b.roundCount||0)-Number(a.roundCount||0))[0]
+}
+function recipeJump(r){const l=latestLand(r.barrelId,r.bulletMake,r.bulletModel,r.bulletGrains);return l&&r.cbto?Number(l.cbtoLands)-Number(r.cbto):null}
+
+function render(){
+  libraries();syncSelects();
+  document.getElementById('mFirearms').textContent=state.firearms.length;
+  document.getElementById('mRounds').textContent=state.shootingLogs.reduce((s,x)=>s+Number(x.rounds||0),0);
+  document.getElementById('mRecipes').textContent=state.recipes.length;document.getElementById('mComponents').textContent=state.components.length;
+  const alerts=[];state.components.forEach(c=>{if(Number(c.quantity)<=Number(c.reorderAt||0))alerts.push(`${c.nameSpec} is at ${c.quantity} ${c.unit||''}`)});state.barrels.forEach(b=>{if(Number(b.cleanInterval)>0&&Number(b.roundsSinceClean)>=Number(b.cleanInterval))alerts.push(`${barrelName(b.id)} is due for cleaning`)});
+  document.getElementById('attention').innerHTML=alerts.length?alerts.map(x=>`<div class="record-head"><span>${esc(x)}</span><span class="pill warn">Attention</span></div>`).join(''):'<div class="empty">No alerts.</div>';
+  document.getElementById('activity').innerHTML=state.activity.length?state.activity.slice(0,8).map(a=>`<div><strong>${esc(a.text)}</strong><br><small class="muted">${new Date(a.at).toLocaleString()}</small></div>`).join(''):'<div class="empty">No activity yet.</div>';
+
+  document.getElementById('firearmList').innerHTML=state.firearms.length?state.firearms.map(f=>{const bs=state.barrels.filter(b=>b.firearmId===f.id);return`<article class="record"><div class="record-head"><div><h3>${esc(firearmName(f.id))}</h3><p class="muted">${esc(f.caliber||'')} · ${esc(f.action||'')}</p></div><span class="pill">${bs.length} barrel${bs.length===1?'':'s'}</span></div><span class="pill">${esc(f.scope||'No scope')}</span>${f.scopeHeight?`<span class="pill">Height ${f.scopeHeight}</span>`:''}<div class="actions"><button class="small" data-edit="firearm" data-id="${f.id}">Edit</button><button class="small" data-delete="firearms" data-id="${f.id}">Delete</button></div></article>`}).join(''):'<div class="empty">No firearms added.</div>';
+
+  let bars=[...state.barrels],bf=document.getElementById('barrelFilter').value,bq=document.getElementById('barrelSearch').value.toLowerCase();if(bf)bars=bars.filter(x=>x.firearmId===bf);if(bq)bars=bars.filter(x=>JSON.stringify(x).toLowerCase().includes(bq));
+  document.getElementById('barrelList').innerHTML=bars.length?bars.map(b=>`<article class="record"><div class="record-head"><div><h3>${esc(b.name||'Barrel')}</h3><p class="muted">${esc(firearmName(b.firearmId))} · ${esc(b.manufacturer||'')} · ${b.length||'—'}"</p></div><span class="pill ${String(b.isCurrent)==='true'?'good':''}">${b.roundCount||0} rounds</span></div><span class="pill">${esc(b.twist||'Twist —')}</span><span class="pill">${b.roundsSinceClean||0} since clean</span><div class="actions"><button class="small" data-edit="barrel" data-id="${b.id}">Edit</button><button class="small" data-delete="barrels" data-id="${b.id}">Delete</button></div></article>`).join(''):'<div class="empty">No matching barrels.</div>';
+
+  let logs=[...state.shootingLogs].sort((a,b)=>(b.date||'').localeCompare(a.date||'')),lf=document.getElementById('logFilter').value,lq=document.getElementById('logSearch').value.toLowerCase();if(lf)logs=logs.filter(x=>x.firearmId===lf);if(lq)logs=logs.filter(x=>JSON.stringify(x).toLowerCase().includes(lq));
+  document.getElementById('logList').innerHTML=logs.length?logs.map(x=>`<article class="record"><div class="record-head"><div><h3>${esc(x.date)} · ${esc(firearmName(x.firearmId))}</h3><p class="muted">${esc(barrelName(x.barrelId))} · ${x.rounds||0} rounds ${x.recipeId?'· '+esc(recipe(x.recipeId)?.name||''):''}</p></div>${x.groupMoa?`<span class="pill good">${x.groupMoa} MOA</span>`:''}</div><span class="pill">Avg ${x.avg==null?'—':Number(x.avg).toFixed(0)}</span><span class="pill">SD ${x.sd==null?'—':Number(x.sd).toFixed(1)}</span><span class="pill">ES ${x.es==null?'—':Number(x.es).toFixed(0)}</span>${x.testType==='ladder'?`<span class="pill warn">Ladder test</span>`:''}<div class="actions"><button class="small" data-detail="log" data-id="${x.id}">Details</button><button class="small" data-edit="log" data-id="${x.id}">Edit</button><button class="small" data-delete="shootingLogs" data-id="${x.id}">Delete</button></div></article>`).join(''):'<div class="empty">No matching logs.</div>';
+
+  let rr=[...state.recipes],rf=document.getElementById('recipeFilter').value,rq=document.getElementById('recipeSearch').value.toLowerCase();if(rf)rr=rr.filter(x=>x.caliber===rf);if(rq)rr=rr.filter(x=>JSON.stringify(x).toLowerCase().includes(rq));
+  document.getElementById('recipeList').innerHTML=rr.length?rr.map(r=>{const j=recipeJump(r);return`<article class="record"><div class="record-head"><div><h3>${esc(r.name)}</h3><p class="muted">${esc(r.bulletMake||'')} ${esc(r.bulletModel||r.bullet||'')} ${r.bulletGrains||''} · ${esc(r.powder||'')} ${r.chargeGr||''}</p></div><span class="pill good">${r.quantity||0} loaded</span></div><span class="pill">COAL ${r.coal||'—'}</span><span class="pill">CBTO ${r.cbto||'—'}</span><span class="pill">Current jump ${j==null?'—':j.toFixed(3)}</span><p class="muted">${esc(r.primer||'')} · ${esc(r.brass||'')}</p><div class="actions"><button class="small" data-edit="recipe" data-id="${r.id}">Edit</button><button class="small" data-copy-recipe="${r.id}">Duplicate</button><button class="small" data-log-recipe="${r.id}">Log</button><button class="small" data-delete="recipes" data-id="${r.id}">Delete</button></div></article>`}).join(''):'<div class="empty">No matching recipes.</div>';
+
+  let cc=[...state.components],cf=document.getElementById('stockFilter').value,cq=document.getElementById('stockSearch').value.toLowerCase();if(cf)cc=cc.filter(x=>x.itemType===cf);if(cq)cc=cc.filter(x=>JSON.stringify(x).toLowerCase().includes(cq));
+  document.getElementById('componentList').innerHTML=cc.length?cc.map(c=>`<article class="record"><div class="record-head"><div><h3>${esc(c.nameSpec)}</h3><p class="muted">${esc(c.itemType)} · ${esc(c.manufacturer||'')} · Lot ${esc(c.lotNumber||'—')}</p></div><span class="pill ${Number(c.quantity)<=Number(c.reorderAt||0)?'warn':'good'}">${c.quantity} ${esc(c.unit||'')}</span></div><div class="actions"><button class="small" data-edit="component" data-id="${c.id}">Edit</button><button class="small" data-delete="components" data-id="${c.id}">Delete</button></div></article>`).join(''):'<div class="empty">No matching components.</div>';
+
+  let ll=[...state.rifleLands].sort((a,b)=>Number(b.roundCount||0)-Number(a.roundCount||0)),lff=document.getElementById('landsFilter').value,lsq=document.getElementById('landsSearch').value.toLowerCase();if(lff)ll=ll.filter(x=>x.firearmId===lff);if(lsq)ll=ll.filter(x=>JSON.stringify(x).toLowerCase().includes(lsq));
+  document.getElementById('landsList').innerHTML=ll.length?ll.map(l=>{const same=state.rifleLands.filter(x=>x.id!==l.id&&x.barrelId===l.barrelId&&clean(x.bulletMake).toLowerCase()===clean(l.bulletMake).toLowerCase()&&clean(x.bulletModel||x.bullet).toLowerCase()===clean(l.bulletModel||l.bullet).toLowerCase()&&Number(x.roundCount||0)<Number(l.roundCount||0)).sort((a,b)=>Number(b.roundCount)-Number(a.roundCount))[0];const change=same?Number(l.cbtoLands)-Number(same.cbtoLands):null;return`<article class="record"><div class="record-head"><div><h3>${esc(l.bulletMake||'')} ${esc(l.bulletModel||l.bullet||'')} ${l.bulletGrains||''}</h3><p class="muted">${esc(firearmName(l.firearmId))} · ${esc(barrelName(l.barrelId))}</p></div><span class="pill good">${Number(l.cbtoLands).toFixed(3)}</span></div><span class="pill">${l.roundCount||0} barrel rounds</span><span class="pill">${esc(l.date||'')}</span>${change!=null?`<span class="pill ${change>=0?'warn':''}">Change ${change>=0?'+':''}${change.toFixed(3)}</span>`:''}<div class="actions"><button class="small" data-edit="lands" data-id="${l.id}">Edit</button><button class="small" data-delete="rifleLands" data-id="${l.id}">Delete</button></div></article>`}).join(''):'<div class="empty">No matching lands measurements.</div>';
+
+  let mm=[...state.maintenance].sort((a,b)=>(b.date||'').localeCompare(a.date||'')),mf=document.getElementById('maintFilter').value,mq=document.getElementById('maintSearch').value.toLowerCase();if(mf)mm=mm.filter(x=>x.firearmId===mf);if(mq)mm=mm.filter(x=>JSON.stringify(x).toLowerCase().includes(mq));
+  document.getElementById('maintenanceList').innerHTML=mm.length?mm.map(m=>`<article class="record"><div class="record-head"><div><h3>${esc(m.type)}</h3><p class="muted">${esc(m.date)} · ${esc(firearmName(m.firearmId))}${m.barrelId?' · '+esc(barrelName(m.barrelId)):''}</p></div><span class="pill">${m.roundCount||0} rounds</span></div>${m.products?`<span class="pill">${esc(m.products)}</span>`:''}<div class="actions"><button class="small" data-edit="maintenance" data-id="${m.id}">Edit</button><button class="small" data-delete="maintenance" data-id="${m.id}">Delete</button></div></article>`).join(''):'<div class="empty">No matching maintenance records.</div>';
+}
+function addLadderRow(data={}){
+  const d=document.createElement('div');d.className='card ladder-row';d.innerHTML=`<div class="three"><label>Charge<input class="lr-charge" type="number" step=".1" list="dl-charges" value="${esc(data.charge||'')}"></label><label>Group MOA<input class="lr-group" type="number" step=".01" value="${esc(data.groupMoa||'')}"></label><label>Rounds<input class="lr-rounds" type="number" min="1" value="${esc(data.rounds||3)}"></label></div><label>Velocities<textarea class="lr-vel">${esc(data.velocities||'')}</textarea></label><button type="button" class="small lr-remove">Remove row</button>`;document.getElementById('ladderRows').appendChild(d)
+}
+async function submit(form){
+  const type=form.dataset.form,o=formObj(form),editing=!!o.id;if(!o.id)o.id=uid();
+  if(type==='firearm'){state.firearms=upsert(state.firearms,o);logActivity(`${editing?'Updated':'Added'} firearm ${o.make} ${o.model}`)}
+  if(type==='barrel'){['length','roundCount','cleanInterval','roundsSinceClean'].forEach(k=>o[k]=num(o[k]));if(o.isCurrent==='true')state.barrels.forEach(b=>{if(b.firearmId===o.firearmId)b.isCurrent='false'});state.barrels=upsert(state.barrels,o);logActivity(`${editing?'Updated':'Added'} barrel ${o.name}`)}
+  if(type==='recipe'){['bulletGrains','chargeGr','coal','cbto','quantity'].forEach(k=>o[k]=num(o[k]));state.recipes=upsert(state.recipes,o);logActivity(`${editing?'Updated':'Added'} recipe ${o.name}`)}
+  if(type==='component'){['quantity','reorderAt'].forEach(k=>o[k]=num(o[k]));state.components=upsert(state.components,o);logActivity(`${editing?'Updated':'Added'} component ${o.nameSpec}`)}
+  if(type==='lands'){['bulletGrains','roundCount','cbtoLands','coalLands'].forEach(k=>o[k]=num(o[k]));o.bullet=`${o.bulletMake||''} ${o.bulletModel||''}`.trim();state.rifleLands=upsert(state.rifleLands,o);logActivity(`Recorded lands for ${o.bullet}`)}
+  if(type==='maintenance'){o.roundCount=num(o.roundCount);state.maintenance=upsert(state.maintenance,o);if(clean(o.type).toLowerCase()==='cleaning'&&o.barrelId){const b=barrel(o.barrelId);if(b)b.roundsSinceClean=0}logActivity(`Recorded ${o.type}`)}
+  if(type==='log'){['rounds','groupMoa','distance','temperature','elevation'].forEach(k=>o[k]=num(o[k]));Object.assign(o,stats(o.velocities));if(!editing)applyRounds(o);state.shootingLogs=upsert(state.shootingLogs,o);logActivity(`Logged ${o.rounds} rounds`)}
+  if(type==='ladder'){const rows=[...form.querySelectorAll('.ladder-row')].map(row=>{const st=stats(row.querySelector('.lr-vel').value);return{charge:num(row.querySelector('.lr-charge').value),groupMoa:num(row.querySelector('.lr-group').value),rounds:num(row.querySelector('.lr-rounds').value),velocities:row.querySelector('.lr-vel').value,...st}}).filter(x=>x.charge!=null);const total=rows.reduce((s,x)=>s+Number(x.rounds||0),0);const all=rows.flatMap(x=>x.values);const st=stats(all.join(','));const log={id:uid(),testType:'ladder',date:o.date,firearmId:o.firearmId,barrelId:o.barrelId,bulletMake:o.bulletMake,bulletModel:o.bulletModel,bulletGrains:num(o.bulletGrains),powder:o.powder,rounds:total,ladderRows:rows,notes:o.notes,...st};applyRounds(log);state.shootingLogs.unshift(log);logActivity(`Logged ladder test with ${rows.length} charges`)}
+  save();form.closest('dialog').close();toast('Saved')
+}
+function upsert(arr,o){const i=arr.findIndex(x=>x.id===o.id);if(i>=0)arr[i]=o;else arr.unshift(o);return arr}
+function applyRounds(o){const b=barrel(o.barrelId);if(b){b.roundCount=Number(b.roundCount||0)+Number(o.rounds||0);b.roundsSinceClean=Number(b.roundsSinceClean||0)+Number(o.rounds||0)}const r=recipe(o.recipeId);if(r)r.quantity=Math.max(0,Number(r.quantity||0)-Number(o.rounds||0))}
+function detailLog(id){const x=state.shootingLogs.find(y=>y.id===id);if(!x)return;document.getElementById('detailTitle').textContent=x.testType==='ladder'?'Ladder Test':'Shooting Log';let body=`<p>${esc(x.date)} · ${esc(firearmName(x.firearmId))} · ${esc(barrelName(x.barrelId))}</p><p class="muted">${esc(x.notes||'')}</p>`;if(x.ladderRows){body+=`<div class="tablewrap"><table class="table"><thead><tr><th>Charge</th><th>Avg</th><th>SD</th><th>ES</th><th>MOA</th></tr></thead><tbody>${x.ladderRows.map(r=>`<tr><td>${r.charge}</td><td>${r.avg==null?'—':r.avg.toFixed(0)}</td><td>${r.sd==null?'—':r.sd.toFixed(1)}</td><td>${r.es==null?'—':r.es.toFixed(0)}</td><td>${r.groupMoa??'—'}</td></tr>`).join('')}</tbody></table></div>`}document.getElementById('detailBody').innerHTML=body;document.getElementById('detailModal').showModal()}
+
+document.addEventListener('click',e=>{
+  const nav=e.target.closest('[data-nav]');if(nav){navigate(nav.dataset.nav);closeSheet()}
+  const op=e.target.closest('[data-open]');if(op){closeSheet();openModal(op.dataset.open)}
+  if(e.target.closest('.close'))e.target.closest('dialog')?.close();
+  const edit=e.target.closest('[data-edit]');if(edit){const map={firearm:['firearms','firearmModal'],barrel:['barrels','barrelModal'],recipe:['recipes','recipeModal'],component:['components','componentModal'],lands:['rifleLands','landsModal'],maintenance:['maintenance','maintenanceModal'],log:['shootingLogs','logModal']};const [store,modal]=map[edit.dataset.edit];openModal(modal,state[store].find(x=>x.id===edit.dataset.id))}
+  const del=e.target.closest('[data-delete]');if(del&&confirm('Delete this record?')){state[del.dataset.delete]=state[del.dataset.delete].filter(x=>x.id!==del.dataset.id);logActivity('Deleted a record');save()}
+  const det=e.target.closest('[data-detail="log"]');if(det)detailLog(det.dataset.id);
+  const dup=e.target.closest('[data-copy-recipe]');if(dup){const r={...recipe(dup.dataset.copyRecipe),id:uid(),name:(recipe(dup.dataset.copyRecipe)?.name||'Recipe')+' Copy'};state.recipes.unshift(r);logActivity(`Duplicated recipe ${r.name}`);save()}
+  const lr=e.target.closest('[data-log-recipe]');if(lr){openModal('logModal');const r=recipe(lr.dataset.logRecipe),f=document.querySelector('#logModal form');f.elements.firearmId.value=r.firearmId||'';filterDependent(f.elements.firearmId);f.elements.barrelId.value=r.barrelId||'';f.elements.recipeId.value=r.id}
+  if(e.target.classList.contains('lr-remove'))e.target.closest('.ladder-row').remove()
+});
+document.querySelectorAll('form[data-form]').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();submit(f)}));
+document.addEventListener('change',e=>{if(e.target.classList.contains('firearm-select'))filterDependent(e.target);if(e.target.classList.contains('recipe-select')){const r=recipe(e.target.value),form=e.target.closest('form');if(r&&form){if(form.elements.firearmId)form.elements.firearmId.value=r.firearmId||form.elements.firearmId.value;if(form.elements.barrelId)form.elements.barrelId.value=r.barrelId||form.elements.barrelId.value}}});
+for(const id of ['barrelFilter','barrelSearch','logFilter','logSearch','recipeFilter','recipeSearch','stockFilter','stockSearch','landsFilter','landsSearch','maintFilter','maintSearch'])document.getElementById(id).addEventListener('input',render);
+document.getElementById('addLadderRow').onclick=()=>addLadderRow();
+document.getElementById('quickBtn').onclick=()=>{document.getElementById('shade').classList.remove('hidden');document.getElementById('quickSheet').classList.remove('hidden')};document.getElementById('shade').onclick=closeSheet;function closeSheet(){document.getElementById('shade').classList.add('hidden');document.getElementById('quickSheet').classList.add('hidden')}
+document.getElementById('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`rifle-tracker-backup-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();document.getElementById('importFile').onchange=async e=>{try{state=normalize(JSON.parse(await e.target.files[0].text()));save();toast('Backup imported')}catch(err){alert('Could not import backup: '+err.message)}}
+document.getElementById('resetBtn').onclick=()=>{if(confirm('Erase all Rifle Tracker data on this device?')){state=fresh();save()}}
+render();
+</script>
+<script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));}</script>
+</body>
+</html>
