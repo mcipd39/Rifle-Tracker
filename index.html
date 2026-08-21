@@ -27,7 +27,7 @@ dialog{width:min(94vw,620px);max-height:90vh;border:1px solid var(--line);border
 </head>
 <body>
 <header class="top">
-  <div class="brand"><h1>Precision Reload Tracker</h1><p>Full rifle, barrel, load, lands and maintenance history</p></div>
+  <div class="brand"><h1>Precision Reload Tracker <span style="font-size:.65rem;color:#8cf0c7;font-weight:800">v4.2</span></h1><p>Full rifle, barrel, load, lands and maintenance history</p></div>
   <button id="quickBtn" class="icon">＋</button>
 </header>
 
@@ -204,6 +204,7 @@ dialog{width:min(94vw,620px);max-height:90vh;border:1px solid var(--line);border
 <datalist id="dl-component-names"></datalist><datalist id="dl-lots"></datalist><datalist id="dl-locations"></datalist><datalist id="dl-units"></datalist><datalist id="dl-comparators"></datalist><datalist id="dl-round-labels"></datalist><datalist id="dl-maint-types"></datalist><datalist id="dl-maint-products"></datalist>
 
 <script>
+const BUILD='4.2';
 const KEY='precisionReloadTracker';
 const fresh=()=>({firearms:[],barrels:[],shootingLogs:[],recipes:[],components:[],rifleLands:[],maintenance:[],activity:[]});
 let state=load();
