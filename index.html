@@ -312,12 +312,46 @@ async function submit(form){
   if(type==='component'){['quantity','reorderAt'].forEach(k=>o[k]=num(o[k]));state.components=upsert(state.components,o);logActivity(`${editing?'Updated':'Added'} component ${o.nameSpec}`)}
   if(type==='lands'){['bulletGrains','roundCount','cbtoLands','coalLands'].forEach(k=>o[k]=num(o[k]));o.bullet=`${o.bulletMake||''} ${o.bulletModel||''}`.trim();state.rifleLands=upsert(state.rifleLands,o);logActivity(`Recorded lands for ${o.bullet}`)}
   if(type==='maintenance'){o.roundCount=num(o.roundCount);state.maintenance=upsert(state.maintenance,o);if(clean(o.type).toLowerCase()==='cleaning'&&o.barrelId){const b=barrel(o.barrelId);if(b)b.roundsSinceClean=0}logActivity(`Recorded ${o.type}`)}
-  if(type==='log'){['rounds','groupMoa','distance','temperature','elevation'].forEach(k=>o[k]=num(o[k]));Object.assign(o,stats(o.velocities));if(!editing)applyRounds(o);state.shootingLogs=upsert(state.shootingLogs,o);logActivity(`Logged ${o.rounds} rounds`)}
+  if(type==='log'){
+    ['rounds','groupMoa','distance','temperature','elevation'].forEach(k=>o[k]=num(o[k]));
+    Object.assign(o,stats(o.velocities));
+    const previous=editing?state.shootingLogs.find(x=>x.id===o.id):null;
+    if(editing&&previous)reconcileEditedLog(previous,o);else applyRounds(o);
+    state.shootingLogs=upsert(state.shootingLogs,o);
+    logActivity(`${editing?'Updated':'Logged'} ${o.rounds||0} rounds`)
+  }
   if(type==='ladder'){const rows=[...form.querySelectorAll('.ladder-row')].map(row=>{const st=stats(row.querySelector('.lr-vel').value);return{charge:num(row.querySelector('.lr-charge').value),groupMoa:num(row.querySelector('.lr-group').value),rounds:num(row.querySelector('.lr-rounds').value),velocities:row.querySelector('.lr-vel').value,...st}}).filter(x=>x.charge!=null);const total=rows.reduce((s,x)=>s+Number(x.rounds||0),0);const all=rows.flatMap(x=>x.values);const st=stats(all.join(','));const log={id:uid(),testType:'ladder',date:o.date,firearmId:o.firearmId,barrelId:o.barrelId,bulletMake:o.bulletMake,bulletModel:o.bulletModel,bulletGrains:num(o.bulletGrains),powder:o.powder,rounds:total,ladderRows:rows,notes:o.notes,...st};applyRounds(log);state.shootingLogs.unshift(log);logActivity(`Logged ladder test with ${rows.length} charges`)}
   save();form.closest('dialog').close();toast('Saved')
 }
 function upsert(arr,o){const i=arr.findIndex(x=>x.id===o.id);if(i>=0)arr[i]=o;else arr.unshift(o);return arr}
-function applyRounds(o){const b=barrel(o.barrelId);if(b){b.roundCount=Number(b.roundCount||0)+Number(o.rounds||0);b.roundsSinceClean=Number(b.roundsSinceClean||0)+Number(o.rounds||0)}const r=recipe(o.recipeId);if(r)r.quantity=Math.max(0,Number(r.quantity||0)-Number(o.rounds||0))}
+function applyRounds(o){
+  const rounds=Number(o.rounds||0),b=barrel(o.barrelId);
+  if(b){b.roundCount=Math.max(0,Number(b.roundCount||0)+rounds);b.roundsSinceClean=Math.max(0,Number(b.roundsSinceClean||0)+rounds)}
+  const r=recipe(o.recipeId);if(r)r.quantity=Math.max(0,Number(r.quantity||0)-rounds)
+}
+function reverseRounds(o){
+  const rounds=Number(o.rounds||0),b=barrel(o.barrelId);
+  if(b){b.roundCount=Math.max(0,Number(b.roundCount||0)-rounds);b.roundsSinceClean=Math.max(0,Number(b.roundsSinceClean||0)-rounds)}
+  const r=recipe(o.recipeId);if(r)r.quantity=Math.max(0,Number(r.quantity||0)+rounds)
+}
+function reconcileEditedLog(oldLog,newLog){
+  const oldRounds=Number(oldLog.rounds||0),newRounds=Number(newLog.rounds||0);
+  if(oldLog.barrelId===newLog.barrelId){
+    const b=barrel(newLog.barrelId),delta=newRounds-oldRounds;
+    if(b){b.roundCount=Math.max(0,Number(b.roundCount||0)+delta);b.roundsSinceClean=Math.max(0,Number(b.roundsSinceClean||0)+delta)}
+  }else{
+    const oldB=barrel(oldLog.barrelId),newB=barrel(newLog.barrelId);
+    if(oldB){oldB.roundCount=Math.max(0,Number(oldB.roundCount||0)-oldRounds);oldB.roundsSinceClean=Math.max(0,Number(oldB.roundsSinceClean||0)-oldRounds)}
+    if(newB){newB.roundCount=Math.max(0,Number(newB.roundCount||0)+newRounds);newB.roundsSinceClean=Math.max(0,Number(newB.roundsSinceClean||0)+newRounds)}
+  }
+  if(oldLog.recipeId===newLog.recipeId){
+    const r=recipe(newLog.recipeId),delta=newRounds-oldRounds;if(r)r.quantity=Math.max(0,Number(r.quantity||0)-delta)
+  }else{
+    const oldR=recipe(oldLog.recipeId),newR=recipe(newLog.recipeId);
+    if(oldR)oldR.quantity=Math.max(0,Number(oldR.quantity||0)+oldRounds);
+    if(newR)newR.quantity=Math.max(0,Number(newR.quantity||0)-newRounds)
+  }
+}
 function detailLog(id){const x=state.shootingLogs.find(y=>y.id===id);if(!x)return;document.getElementById('detailTitle').textContent=x.testType==='ladder'?'Ladder Test':'Shooting Log';let body=`<p>${esc(x.date)} · ${esc(firearmName(x.firearmId))} · ${esc(barrelName(x.barrelId))}</p><p class="muted">${esc(x.notes||'')}</p>`;if(x.ladderRows){body+=`<div class="tablewrap"><table class="table"><thead><tr><th>Charge</th><th>Avg</th><th>SD</th><th>ES</th><th>MOA</th></tr></thead><tbody>${x.ladderRows.map(r=>`<tr><td>${r.charge}</td><td>${r.avg==null?'—':r.avg.toFixed(0)}</td><td>${r.sd==null?'—':r.sd.toFixed(1)}</td><td>${r.es==null?'—':r.es.toFixed(0)}</td><td>${r.groupMoa??'—'}</td></tr>`).join('')}</tbody></table></div>`}document.getElementById('detailBody').innerHTML=body;document.getElementById('detailModal').showModal()}
 
 document.addEventListener('click',e=>{
@@ -325,7 +359,12 @@ document.addEventListener('click',e=>{
   const op=e.target.closest('[data-open]');if(op){closeSheet();openModal(op.dataset.open)}
   if(e.target.closest('.close'))e.target.closest('dialog')?.close();
   const edit=e.target.closest('[data-edit]');if(edit){const map={firearm:['firearms','firearmModal'],barrel:['barrels','barrelModal'],recipe:['recipes','recipeModal'],component:['components','componentModal'],lands:['rifleLands','landsModal'],maintenance:['maintenance','maintenanceModal'],log:['shootingLogs','logModal']};const [store,modal]=map[edit.dataset.edit];openModal(modal,state[store].find(x=>x.id===edit.dataset.id))}
-  const del=e.target.closest('[data-delete]');if(del&&confirm('Delete this record?')){state[del.dataset.delete]=state[del.dataset.delete].filter(x=>x.id!==del.dataset.id);logActivity('Deleted a record');save()}
+  const del=e.target.closest('[data-delete]');if(del&&confirm('Delete this record?')){
+    if(del.dataset.delete==='shootingLogs'){
+      const oldLog=state.shootingLogs.find(x=>x.id===del.dataset.id);if(oldLog)reverseRounds(oldLog)
+    }
+    state[del.dataset.delete]=state[del.dataset.delete].filter(x=>x.id!==del.dataset.id);logActivity('Deleted a record');save()
+  }
   const det=e.target.closest('[data-detail="log"]');if(det)detailLog(det.dataset.id);
   const dup=e.target.closest('[data-copy-recipe]');if(dup){const r={...recipe(dup.dataset.copyRecipe),id:uid(),name:(recipe(dup.dataset.copyRecipe)?.name||'Recipe')+' Copy'};state.recipes.unshift(r);logActivity(`Duplicated recipe ${r.name}`);save()}
   const lr=e.target.closest('[data-log-recipe]');if(lr){openModal('logModal');const r=recipe(lr.dataset.logRecipe),f=document.querySelector('#logModal form');f.elements.firearmId.value=r.firearmId||'';filterDependent(f.elements.firearmId);f.elements.barrelId.value=r.barrelId||'';f.elements.recipeId.value=r.id}
